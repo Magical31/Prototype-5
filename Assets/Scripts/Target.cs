@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
+    GameManager gameManager;
+
     Rigidbody targetRb;
 
     float minSpeed = 12;
@@ -11,6 +13,11 @@ public class Target : MonoBehaviour
     float maxTorque = 10;
     float xRange = 4;
     float ySpawnPos = -6;
+
+    [SerializeField]int pointValue;
+
+    public ParticleSystem explosionParticle;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +25,8 @@ public class Target : MonoBehaviour
         targetRb.AddForce(RandomForce(), ForceMode.Impulse);
         targetRb.AddTorque(RandomTorque(), RandomTorque(), RandomTorque(), ForceMode.Impulse);
         transform.position = RandomSpawnPos();
+
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     Vector3 RandomForce()
@@ -43,6 +52,10 @@ public class Target : MonoBehaviour
     private void OnMouseDown()
     {
         Destroy(gameObject);
+
+        Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+
+        gameManager.UpdateScore(pointValue);
     }
 
     private void OnTriggerEnter(Collider other)
